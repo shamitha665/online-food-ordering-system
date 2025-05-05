@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct order {
+    char itemName[100];
+    int qty;
+    float price;
+    struct order *next;
+};
+char *StarterItems[] = {"Egg Roll", "Veg Spring Roll", "Chicken Roll", "French Fries", "Momos"};
+float starterPrices[] = {30.0, 40.0, 50.0, 40.0, 60.0};
+
+char *vegSoupItems[] = {"Veg Clear Soup", "Veg Corn Soup", "Cream of Tomato", "Veg Lemon Coriander"};
+float vegSoupPrices[] = {149.0, 149.0, 149.0, 149.0};
+
+char *nonVegSoupItems[] = {"Chicken Clear", "Chicken Corn", "Chicken Dragon", "Chicken Manchow"};
+float nonVegSoupPrices[] = {169.0, 169.0, 169.0, 169.0};
+
+char *fruiteJucieItems[] = {"Mango Juice", "Grape Juice", "Lemonade", "Mojito", "Fresh Fruit Juice"};
+float fruiteJuciePrices[] = {90.0, 90.0, 97.0, 177.0, 157.0};
+
+char *iceCreamItems[] = {"Chocolate", "Vanilla", "Black Currant", "Pista", "Caramel"};
+float iceCreamPrices[] = {100.0, 90.0, 150.0, 130.0, 150.0};
+
+char *vegBiriyaniItems[] = {"Veg Biriyani", "Paneer Biriyani", "Mushroom Biriyani", "Meal Maker", "Kaju Biriyani"};
+float vegBiriyaniPrices[] = {100.0, 120.0, 150.0, 90.0, 140.0};
+
+char *nonVegBiriyaniItems[] = {"Chicken Biriyani", "Mutton Biriyani", "Fish Biriyani", "Egg Biriyani", "Prawns Biriyani"};
+float nonVegBiriyaniPrices[] = {150.0, 200.0, 180.0, 100.0, 160.0};
+
+char *vegCurriesItems[] = {"Paneer Butter", "Palakura Pappu", "Mix Veg", "Guthi Vankaya", "Tomato Pappu"};
+float vegCurriesPrices[] = {90.0, 40.0, 40.0, 40.0, 40.0};
+
+char *nonVegCurriesItems[] = {"Chicken Tikka", "Kadai Chicken", "Mutton Rogan", "Mughlai Chicken", "Chicken Kandhari"};
+float nonVegCurriesPrices[] = {349.0, 349.0, 369.0, 349.0, 369.0};
+
+
+// Function to display a menu
+void displayMenu(char *items[], float prices[], int count, const char *title) {
+    printf("\n--- %s ---\n", title);
+    for (int i = 0; i < count; i++) {
+        printf("%d. %s - ₹%.2f\n", i + 1, items[i], prices[i]);
+    }
+}
+
+
+void takeOrder(char *items[], float prices[], int count, struct order **head) {
+    int itemNo, qty;
+    printf("Enter item number to order (1 to %d): ", count);
+    scanf("%d", &itemNo);
+    if (itemNo < 1 || itemNo > count) {
+        printf("Invalid item number!\n");
+        return;
+    }
+    printf("Enter quantity: ");
+    scanf("%d", &qty);
+    if (qty <= 0) {
+        printf("Invalid quantity!\n");
+        return;
+    }
+
+    struct order *newOrder = (struct order *)malloc(sizeof(struct order));
+    strcpy(newOrder->itemName, items[itemNo - 1]);
+    newOrder->qty = qty;
+    newOrder->price = prices[itemNo - 1] * qty;
+    newOrder->next = NULL;
+
+    if (*head == NULL) {
+        *head = newOrder;
+    } else {
+        struct order *temp = *head;
+        while (temp->next != NULL)
+            temp = temp->next;
+        temp->next = newOrder;
+    }
+
+    printf("Item added to order!\n");
+}
+
+void displayBill(struct order *head) {
+    float total = 0;
+    printf("\n--- BILL ---\n");
+    printf("%-25s %-10s %-10s\n", "Item", "Qty", "Price");
+    while (head != NULL) {
+        printf("%-25s %-10d ₹%-9.2f\n", head->itemName, head->qty, head->price);
+        total += head->price;
+        head = head->next;
+    }
+    printf("-------------------------------\n");
+    printf("Total Amount: ₹%.2f\n", total);
+}
+
+int main() {
+    int choice;
+    struct order *orderItemsList = NULL;
+
+    // Count array elements
+    int starterCount = sizeof(starterPrices) / sizeof(starterPrices[0]);
+    int vegSoupCount = sizeof(vegSoupPrices) / sizeof(vegSoupPrices[0]);
+    int nonVegSoupCount = sizeof(nonVegSoupPrices) / sizeof(nonVegSoupPrices[0]);
+    int fruiteJucieCount = sizeof(fruiteJuciePrices) / sizeof(fruiteJuciePrices[0]);
+    int icecreamCount = sizeof(iceCreamPrices) / sizeof(iceCreamPrices[0]);
+    int vegBiriyaniCount = sizeof(vegBiriyaniPrices) / sizeof(vegBiriyaniPrices[0]);
+    int nonVegBiriyaniCount = sizeof(nonVegBiriyaniPrices) / sizeof(nonVegBiriyaniPrices[0]);
+    int vegCurriesCount = sizeof(vegCurriesPrices) / sizeof(vegCurriesPrices[0]);
+    int nonVegCurriesCount = sizeof(nonVegCurriesPrices) / sizeof(nonVegCurriesPrices[0]);
+
+
+    displayMenu(StarterItems, starterPrices, starterCount, "STARTERS");
+    displayMenu(vegSoupItems, vegSoupPrices, vegSoupCount, "VEG SOUPS");
+    displayMenu(nonVegSoupItems, nonVegSoupPrices, nonVegSoupCount, "NON VEG SOUPS");
+    displayMenu(fruiteJucieItems, fruiteJuciePrices, fruiteJucieCount, "FRUITE JUICES");
+    displayMenu(iceCreamItems, iceCreamPrices, icecreamCount, "ICE CREAMS");
+    displayMenu(vegBiriyaniItems, vegBiriyaniPrices, vegBiriyaniCount, "VEG BIRIYANI");
+    displayMenu(nonVegBiriyaniItems, nonVegBiriyaniPrices, nonVegBiriyaniCount, "NON VEG BIRIYANI");
+    displayMenu(vegCurriesItems, vegCurriesPrices, vegCurriesCount, "VEG CURRIES");
+    displayMenu(nonVegCurriesItems, nonVegCurriesPrices, nonVegCurriesCount, "NON VEG CURRIES");
+
+    do {
+        printf("\nChoose category to order:\n");
+        printf("1. Starters\n2. Veg Soup\n3. Non-Veg Soup\n4. Fruite Juice\n5. Ice Creams\n6. Veg Biriyani\n7. Non-Veg Biriyani\n8. Veg Curries\n9. Non-Veg Curries\n0. Finish Order\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                displayMenu(StarterItems, starterPrices, starterCount, "STARTERS");
+                takeOrder(StarterItems, starterPrices, starterCount, &orderItemsList);
+                break;
+            case 2:
+                displayMenu(vegSoupItems, vegSoupPrices, vegSoupCount, "VEG SOUPS");
+                takeOrder(vegSoupItems, vegSoupPrices, vegSoupCount, &orderItemsList);
+                break;
+            case 3:
+                displayMenu(nonVegSoupItems, nonVegSoupPrices, nonVegSoupCount, "NON VEG SOUPS");
+                takeOrder(nonVegSoupItems, nonVegSoupPrices, nonVegSoupCount, &orderItemsList);
+                break;
+            case 4:
+                displayMenu(fruiteJucieItems, fruiteJuciePrices, fruiteJucieCount, "FRUITE JUICES");
+                takeOrder(fruiteJucieItems, fruiteJuciePrices, fruiteJucieCount, &orderItemsList);
+                break;
+            case 5:
+                displayMenu(iceCreamItems, iceCreamPrices, icecreamCount, "ICE CREAMS");
+                takeOrder(iceCreamItems, iceCreamPrices, icecreamCount, &orderItemsList);
+                break;
+            case 6:
+                displayMenu(vegBiriyaniItems, vegBiriyaniPrices, vegBiriyaniCount, "VEG BIRIYANI");
+                takeOrder(vegBiriyaniItems, vegBiriyaniPrices, vegBiriyaniCount, &orderItemsList);
+                break;
+            case 7:
+                displayMenu(nonVegBiriyaniItems, nonVegBiriyaniPrices, nonVegBiriyaniCount, "NON VEG BIRIYANI");
+                takeOrder(nonVegBiriyaniItems, nonVegBiriyaniPrices, nonVegBiriyaniCount, &orderItemsList);
+                break;
+            case 8:
+                displayMenu(vegCurriesItems, vegCurriesPrices, vegCurriesCount, "VEG CURRIES");
+                takeOrder(vegCurriesItems, vegCurriesPrices, vegCurriesCount, &orderItemsList);
+                break;
+            case 9:
+                displayMenu(nonVegCurriesItems, nonVegCurriesPrices, nonVegCurriesCount, "NON VEG CURRIES");
+                takeOrder(nonVegCurriesItems, nonVegCurriesPrices, nonVegCurriesCount, &orderItemsList);
+                break;
+            case 0:
+                printf("Finalizing order...\n");
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while (choice != 0);
+    displayBill(orderItemsList);
+
+  return 0;
+}
